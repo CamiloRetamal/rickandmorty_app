@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply font-sans antialiased bg-slate-50 text-slate-900;
+  }
+
+  html.dark {
+    color-scheme: dark;
+    @apply bg-slate-900 text-slate-100;
+  }
+}

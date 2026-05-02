@@ -1,0 +1,258 @@
+<div class="px-2 py-4 dark:text-slate-200">
+  <div class="flex flex-col items-center gap-y-3 lg:hidden">
+    <div class="flex w-full items-center justify-center">
+      <span class="text-sm font-medium text-gray-700 dark:text-slate-300">
+        Total:
+        <span class="font-semibold text-gray-900 dark:text-slate-100">{{ totalRecords() }}</span>
+        {{ recordsLabel() }}
+      </span>
+    </div>
+
+    @if (showRecordsPerPageControl()) {
+      <div class="flex w-full flex-wrap items-center justify-center gap-x-2 gap-y-1">
+        <label
+          for="dt-rpp-mobile"
+          class="whitespace-nowrap text-sm text-gray-800 dark:text-slate-300"
+          >Mostrar:</label
+        >
+        <select
+          id="dt-rpp-mobile"
+          class="h-9 w-16 rounded-lg border border-gray-200 bg-white px-2 text-sm text-gray-900 focus:border-brand focus:ring-2 focus:ring-brand/40 enabled:cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-600 disabled:opacity-80 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
+          [disabled]="recordsPerPageSelectDisabled()"
+          (change)="onRecordsPerPageSelectChange($event)"
+        >
+          @for (opt of recordsPerPageOptions; track opt) {
+            <option [value]="opt" [selected]="opt === effectiveRecordsPerPage()">
+              {{ opt }}
+            </option>
+          }
+        </select>
+        <span class="whitespace-nowrap text-sm text-gray-800 dark:text-slate-300">{{
+          recordsLabel()
+        }}</span>
+      </div>
+    }
+
+    @if (showVisiblePages() && totalPages() > 1) {
+      <div class="flex w-full flex-wrap items-center justify-center gap-1">
+        <button
+          type="button"
+          class="hidden cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2 text-gray-900 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 sm:inline-flex"
+          [disabled]="currentPage() === 1"
+          aria-label="Primera página"
+          (click)="goFirst()"
+        >
+          <ng-container *ngTemplateOutlet="chevFirst" />
+        </button>
+        <button
+          type="button"
+          class="inline-flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2 text-gray-900 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+          [disabled]="currentPage() === 1"
+          aria-label="Página anterior"
+          (click)="goPrev()"
+        >
+          <ng-container *ngTemplateOutlet="chevLeft" />
+        </button>
+
+        @for (page of visiblePages(); track $index) {
+          <span class="mx-0.5 text-sm">
+            @if (page !== '...') {
+              <button
+                type="button"
+                [class]="
+                  page === currentPage()
+                    ? 'inline-flex min-h-[30px] min-w-[30px] cursor-pointer items-center justify-center rounded-md px-1.5 py-1 bg-brand font-semibold text-white hover:bg-brand-dark'
+                    : 'inline-flex min-h-[30px] min-w-[30px] cursor-pointer items-center justify-center rounded-md px-1.5 py-1 text-gray-900 hover:bg-gray-200 dark:text-slate-100 dark:hover:bg-slate-600'
+                "
+                (click)="goPage(page)"
+              >
+                {{ page }}
+              </button>
+            } @else {
+              <span
+                class="inline-flex min-h-[30px] min-w-[30px] items-center justify-center px-1.5 text-gray-500 dark:text-slate-500"
+                >...</span
+              >
+            }
+          </span>
+        }
+
+        <button
+          type="button"
+          class="inline-flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2 text-gray-900 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+          [disabled]="currentPage() === totalPages() || totalPages() === 0"
+          aria-label="Página siguiente"
+          (click)="goNext()"
+        >
+          <ng-container *ngTemplateOutlet="chevRight" />
+        </button>
+        <button
+          type="button"
+          class="hidden cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2 text-gray-900 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 sm:inline-flex"
+          [disabled]="currentPage() === totalPages() || totalPages() === 0"
+          aria-label="Última página"
+          (click)="goLast()"
+        >
+          <ng-container *ngTemplateOutlet="chevLast" />
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="hidden items-center gap-4 lg:grid lg:grid-cols-3">
+    <div class="flex justify-start">
+      @if (showRecordsPerPageControl()) {
+        <div class="flex items-center gap-x-2">
+          <label
+            for="dt-rpp-desktop"
+            class="whitespace-nowrap text-sm text-gray-800 dark:text-slate-300"
+            >Mostrar:</label
+          >
+          <select
+            id="dt-rpp-desktop"
+            class="h-9 w-16 rounded-lg border border-gray-200 bg-white px-2 text-sm text-gray-900 focus:border-brand focus:ring-2 focus:ring-brand/40 enabled:cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-600 disabled:opacity-80 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
+            [disabled]="recordsPerPageSelectDisabled()"
+            (change)="onRecordsPerPageSelectChange($event)"
+          >
+            @for (opt of recordsPerPageOptions; track opt) {
+              <option [value]="opt" [selected]="opt === effectiveRecordsPerPage()">
+                {{ opt }}
+              </option>
+            }
+          </select>
+          <span class="whitespace-nowrap text-sm text-gray-800 dark:text-slate-300">{{
+            recordsLabel()
+          }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="flex flex-wrap items-center justify-center gap-1">
+      @if (showVisiblePages() && totalPages() > 1) {
+        <button
+          type="button"
+          class="hidden cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2 text-gray-900 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 sm:inline-flex"
+          [disabled]="currentPage() === 1"
+          aria-label="Primera página"
+          (click)="goFirst()"
+        >
+          <ng-container *ngTemplateOutlet="chevFirst" />
+        </button>
+        <button
+          type="button"
+          class="inline-flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2 text-gray-900 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+          [disabled]="currentPage() === 1"
+          aria-label="Página anterior"
+          (click)="goPrev()"
+        >
+          <ng-container *ngTemplateOutlet="chevLeft" />
+        </button>
+
+        @for (page of visiblePages(); track $index) {
+          <span class="mx-0.5 text-sm">
+            @if (page !== '...') {
+              <button
+                type="button"
+                [class]="
+                  page === currentPage()
+                    ? 'inline-flex min-h-[30px] min-w-[30px] cursor-pointer items-center justify-center rounded-md px-1.5 py-1 bg-brand font-semibold text-white hover:bg-brand-dark'
+                    : 'inline-flex min-h-[30px] min-w-[30px] cursor-pointer items-center justify-center rounded-md px-1.5 py-1 text-gray-900 hover:bg-gray-200 dark:text-slate-100 dark:hover:bg-slate-600'
+                "
+                (click)="goPage(page)"
+              >
+                {{ page }}
+              </button>
+            } @else {
+              <span
+                class="inline-flex min-h-[30px] min-w-[30px] items-center justify-center px-1.5 text-gray-500 dark:text-slate-500"
+                >...</span
+              >
+            }
+          </span>
+        }
+
+        <button
+          type="button"
+          class="inline-flex cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2 text-gray-900 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+          [disabled]="currentPage() === totalPages() || totalPages() === 0"
+          aria-label="Página siguiente"
+          (click)="goNext()"
+        >
+          <ng-container *ngTemplateOutlet="chevRight" />
+        </button>
+        <button
+          type="button"
+          class="hidden cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2 text-gray-900 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 sm:inline-flex"
+          [disabled]="currentPage() === totalPages() || totalPages() === 0"
+          aria-label="Última página"
+          (click)="goLast()"
+        >
+          <ng-container *ngTemplateOutlet="chevLast" />
+        </button>
+      }
+    </div>
+
+    <div class="flex justify-end">
+      <span class="text-sm font-medium text-gray-700 dark:text-slate-300">
+        Total:
+        <span class="font-semibold text-gray-900 dark:text-slate-100">{{ totalRecords() }}</span>
+        {{ recordsLabel() }}
+      </span>
+    </div>
+  </div>
+</div>
+
+<ng-template #chevFirst>
+  <svg
+    class="h-[18px] w-[18px]"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+    />
+  </svg>
+</ng-template>
+<ng-template #chevLeft>
+  <svg
+    class="h-[18px] w-[18px]"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+  </svg>
+</ng-template>
+<ng-template #chevRight>
+  <svg
+    class="h-[18px] w-[18px]"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+  </svg>
+</ng-template>
+<ng-template #chevLast>
+  <svg
+    class="h-[18px] w-[18px]"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M13 5l7 7-7 7M5 5l7 7-7 7"
+    />
+  </svg>
+</ng-template>

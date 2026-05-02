@@ -1,0 +1,6 @@
+#!/bin/sh
+echo "🚀 Pre-push: build"
+
+npm run build
+
+echo "✅ Pre-push OK"

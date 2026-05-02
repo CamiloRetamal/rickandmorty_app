@@ -1,0 +1,32 @@
+#!/bin/sh
+commit_msg_file=$1
+commit_msg=$(cat "$commit_msg_file")
+first_line=$(printf '%s\n' "$commit_msg" | head -n1)
+
+# Legado: TIPO: descripción (FEATURE, FIX, REFACTOR, …)
+pattern_legacy="^(FEATURE|FIX|REFACTOR|DOCS|STYLE|TEST|CHORE): .+"
+
+# Conventional Commits: tipo(scope): descripción o tipo: descripción
+pattern_conv="^(feat|fix|refactor|chore|docs|style|test|build|ci)(\([^)]+\))?: .+"
+
+if echo "$first_line" | grep -qE "$pattern_legacy"; then
+  echo "✅ Formato de commit válido (legado)"
+  exit 0
+fi
+
+if echo "$first_line" | grep -qE "$pattern_conv"; then
+  echo "✅ Formato de commit válido (Conventional Commits)"
+  exit 0
+fi
+
+echo "❌ ERROR: Formato de commit inválido."
+echo ""
+echo "Aceptado (Conventional Commits), ejemplo:"
+echo "  feat(episodes): mejoras en tabla"
+echo "  chore(app): ajustes de configuración"
+echo ""
+echo "O formato legado:"
+echo "  FEATURE: descripción"
+echo "  CHORE: descripción"
+echo ""
+exit 1

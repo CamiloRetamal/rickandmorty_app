@@ -1,0 +1,104 @@
+<div
+  @pageCardReveal
+  class="mx-auto w-full min-w-0 max-w-6xl rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:shadow-slate-950/40"
+>
+  <header class="min-w-0 border-b border-slate-200 px-4 py-4 sm:px-6 dark:border-slate-700">
+    <h1 class="break-words text-xl font-semibold text-slate-900 dark:text-slate-100">
+      {{ ui.title }}
+    </h1>
+  </header>
+
+  <div class="min-w-0 p-4 sm:p-6">
+    <div
+      class="mb-6 flex w-full min-w-0 max-w-full flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-end"
+    >
+      <app-form-input
+        [label]="ui.searchLabel"
+        [control]="searchControl"
+        [placeholder]="ui.searchPlaceholder"
+        [withSearchIcon]="true"
+        class="min-w-0 flex-1 basis-full lg:basis-0"
+      />
+
+      <app-form-select
+        [label]="ui.seasonLabel"
+        [options]="vm().seasonOptions"
+        [value]="seasonSelectValue()"
+        (changed)="onSeasonChange($event)"
+        class="min-w-0 w-full shrink-0 lg:w-auto lg:max-w-xs"
+      />
+    </div>
+
+    @if (vm().loading) {
+      <app-loading-spinner color="yellow" size="md" [message]="ui.loading" />
+    } @else if (vm().error) {
+      <div class="flex gap-4 py-10 text-slate-800 dark:text-slate-200" role="alert">
+        <span class="mt-0.5 shrink-0 text-red-600 dark:text-red-400" aria-hidden="true">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </span>
+        <div>
+          <p class="font-semibold text-slate-900 dark:text-slate-100">{{ ui.errorTitle }}</p>
+          <p class="mt-1 text-slate-600 dark:text-slate-400">{{ vm().error }}</p>
+          <button
+            type="button"
+            class="mt-4 rounded-md border border-brand bg-white px-4 py-2 text-sm font-medium text-brand transition-colors hover:bg-slate-50 dark:border-brand-light dark:bg-slate-800 dark:text-brand-light dark:hover:bg-slate-700"
+            (click)="retry()"
+          >
+            {{ ui.retry }}
+          </button>
+        </div>
+      </div>
+    } @else if (vm().emptyApi) {
+      <div
+        class="flex flex-col items-center gap-2 py-16 text-center text-slate-600 dark:text-slate-400"
+      >
+        <svg
+          class="h-10 w-10 text-slate-400 dark:text-slate-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+          />
+        </svg>
+        <p class="text-lg font-semibold text-slate-800 dark:text-slate-200">{{ ui.emptyTitle }}</p>
+        <p class="max-w-md text-sm dark:text-slate-400">{{ ui.emptyHint }}</p>
+      </div>
+    } @else {
+      <app-data-table
+        [data]="episodeRows()"
+        [columns]="episodesColumns"
+        [viewActionLabel]="ui.table.viewEpisode"
+        [getRowClass]="episodesRowClassFn"
+        [showPagination]="tablePagination.showPagination"
+        [totalRecords]="vm().pagination.totalCount"
+        [recordsPerPage]="tablePagination.recordsPerPage"
+        [currentPage]="vm().pagination.page"
+        [showRecordsPerPage]="tablePagination.showRecordsPerPage"
+        [recordsPerPageReadonly]="tablePagination.recordsPerPageReadonly"
+        [showVisiblePages]="tablePagination.showVisiblePages"
+        [activeSortColumnKey]="activeSortColumnKey()"
+        [activeSortDirection]="sort().sortDir"
+        (rowClick)="onDataTableRow($event)"
+        (columnSort)="onDataTableSort($event)"
+        (currentPageChange)="onDataTablePage($event)"
+      />
+    }
+  </div>
+</div>
+
+@if (detailEpisode(); as ep) {
+  <app-episode-detail-modal [episode]="ep" (closed)="closeDetail()" />
+}

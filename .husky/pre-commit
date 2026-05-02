@@ -1,0 +1,6 @@
+#!/bin/sh
+echo "🧪 Pre-commit: validaciones rápidas"
+
+npx lint-staged
+
+echo "✅ Pre-commit OK"

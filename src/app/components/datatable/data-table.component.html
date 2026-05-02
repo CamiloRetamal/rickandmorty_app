@@ -1,0 +1,122 @@
+<div class="w-full">
+  <div
+    class="w-full max-w-full overflow-x-auto rounded-lg bg-white shadow-sm dark:bg-slate-800 dark:shadow-slate-950/30"
+    style="-webkit-overflow-scrolling: touch"
+  >
+    <table class="w-full min-w-full table-fixed divide-y divide-gray-200 dark:divide-slate-600">
+      <thead class="text-white" [style.background-color]="headerColor()">
+        <tr>
+          @for (column of columns(); track column.key) {
+            <th
+              scope="col"
+              [ngClass]="headerCellClass(column)"
+              [style.width]="column.width ?? null"
+              [style.minWidth]="column.minWidth ?? null"
+            >
+              @if (column.type === columnKind.ACTIONS) {
+                <div class="flex justify-center px-0.5">
+                  <span class="text-center">{{ column.label }}</span>
+                </div>
+              } @else {
+                <div class="flex min-w-0 items-center space-x-1">
+                  <span class="min-w-0 truncate">{{ column.label }}</span>
+                  @if (column.sortable) {
+                    <button
+                      type="button"
+                      class="inline-flex shrink-0 cursor-pointer rounded p-0.5 text-white hover:bg-white/10"
+                      [attr.aria-label]="'Ordenar por ' + column.label"
+                      (click)="onSortClick(column, $event)"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                        />
+                      </svg>
+                    </button>
+                  }
+                </div>
+              }
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 bg-white dark:divide-slate-600 dark:bg-slate-800/90">
+        @if (data().length === 0) {
+          <tr>
+            <td
+              class="py-8 text-center text-gray-500 dark:text-slate-400"
+              [attr.colspan]="columns().length"
+            >
+              {{ emptyMessage() }}
+            </td>
+          </tr>
+        } @else {
+          @for (row of data(); track rowTrackValue(row)) {
+            <tr
+              [attr.class]="rowClassesCombined(row)"
+              (click)="onRowClick(row)"
+              (keyup.enter)="onRowClick(row)"
+              tabindex="0"
+              role="button"
+            >
+              @for (column of columns(); track column.key) {
+                <td
+                  [ngClass]="bodyCellClass(column)"
+                  [style.width]="column.width ?? null"
+                  [style.minWidth]="column.minWidth ?? null"
+                  [style.max-width]="column.maxWidth ?? null"
+                  [attr.title]="cellTitle(row, column)"
+                  (click)="onCellClick(row, column, $event)"
+                >
+                  @if (column.type === columnKind.ACTIONS) {
+                    <button
+                      type="button"
+                      class="inline-flex items-center justify-center rounded-full p-1.5 text-brand transition-colors hover:bg-brand/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/35 dark:text-brand-light dark:hover:bg-brand/20 dark:focus-visible:ring-brand-light/40"
+                      [attr.aria-label]="viewActionLabel()"
+                      (click)="onViewClick(row, $event)"
+                    >
+                      <lucide-icon
+                        [img]="viewActionIcon"
+                        [size]="18"
+                        [strokeWidth]="2"
+                        class="shrink-0"
+                        aria-hidden="true"
+                      />
+                    </button>
+                  } @else {
+                    <span class="block min-w-0 truncate">
+                      {{ asString(getCellValue(row, column.key)) }}
+                    </span>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (showPagination()) {
+    <app-data-table-paginator
+      [totalRecords]="totalRecords()"
+      [recordsPerPage]="recordsPerPage()"
+      [currentPage]="currentPage()"
+      [showRecordsPerPage]="showRecordsPerPage()"
+      [recordsPerPageReadonly]="recordsPerPageReadonly()"
+      [showVisiblePages]="showVisiblePages()"
+      (currentPageChange)="onPageChange($event)"
+      (recordsPerPageChange)="onRecordsPerPageChange($event)"
+    />
+  }
+</div>
