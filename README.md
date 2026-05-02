@@ -2,6 +2,11 @@
 
 Aplicación de prueba técnica que consume la [API pública de Rick and Morty](https://rickandmortyapi.com/documentation/#rest) y muestra episodios con filtros, paginación, ordenación y detalle en modal.
 
+## Repositorio y acceso
+
+- **Código:** [github.com/CamiloRetamal/rickandmorty_app](https://github.com/CamiloRetamal/rickandmorty_app)
+- **Demo en vivo (Vercel):** [rickandmorty-app-psi.vercel.app/episodes](https://rickandmorty-app-psi.vercel.app/episodes) (la raíz `/` redirige a episodios)
+
 ---
 
 ## Cómo funciona la aplicación
