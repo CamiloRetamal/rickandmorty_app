@@ -38,8 +38,8 @@ El **interceptor** HTTP registra errores de forma centralizada; los efectos trad
 
 ## Requisitos
 
-- Node.js 18+ (recomendado LTS)
-- npm 9+
+- **Node.js 20+**; lo ideal es la **LTS activa** que marque [nodejs.org](https://nodejs.org/).
+- **npm 9+**.
 
 ---
 
