@@ -2,6 +2,25 @@
 
 Aplicación de prueba técnica que consume la [API pública de Rick and Morty](https://rickandmortyapi.com/documentation/#rest) y muestra episodios con filtros, paginación, ordenación y detalle en modal.
 
+## Arquitectura
+
+- **Core:** interceptores HTTP, constantes, animaciones y tema compartido.
+- **Features:** módulos por dominio (p. ej. `features/episodes`: rutas lazy, página, `EpisodesApiService`, componentes del listado/modal).
+- **Components:** piezas reutilizables (`DataTable`, `BaseModal`, formularios, spinner).
+- **State:** **NgRx** (actions, reducers, effects, selectors) para listado, filtros, paginación, errores y caché de páginas.
+
+## Configuración
+
+- **No requiere variables de entorno** para ejecutar en local.
+- La API consumida es pública y está documentada en [rickandmortyapi.com](https://rickandmortyapi.com/documentation/#rest). Base típica: `https://rickandmortyapi.com/api`.
+
+## Uso de Angular moderno
+
+- **Standalone components** (sin `NgModules` en la configuración habitual de la app).
+- **Signals** y **`toSignal`** para enlazar el store con la vista de forma reactiva donde aplica.
+- **`ChangeDetectionStrategy.OnPush`** en componentes de UI y feature para rendimiento y predictibilidad.
+- **Lazy loading** de la feature de episodios con **`loadChildren`** en las rutas.
+
 ## Repositorio y acceso
 
 - **Código:** [github.com/CamiloRetamal/rickandmorty_app](https://github.com/CamiloRetamal/rickandmorty_app)
